@@ -1,0 +1,79 @@
+Table dim_student {
+  student_key bigint [pk, increment]
+  student_id varchar(50) [unique, not null]
+  date_of_birth date
+  gender varchar(20)
+}
+
+Table dim_school {
+  school_key bigint [pk, increment]
+  school_id varchar(50) [unique, not null]
+  school_name varchar(255)
+  school_type varchar(100)
+}
+
+Table dim_district {
+  district_key bigint [pk, increment]
+  district_name varchar(100) [unique, not null]
+  province_name varchar(100)
+}
+
+Table dim_stream {
+  stream_key bigint [pk, increment]
+  stream_name varchar(100) [unique, not null]
+}
+
+Table dim_medium {
+  medium_key bigint [pk, increment]
+  medium_name varchar(50) [unique, not null]
+}
+
+Table dim_subject {
+  subject_key bigint [pk, increment]
+  subject_code varchar(20)
+  subject_name varchar(100) [unique, not null]
+}
+
+Table dim_exam {
+  exam_key bigint [pk, increment]
+  exam_name varchar(100)
+  exam_year int
+  exam_type varchar(50)
+}
+
+Table fact_student_performance {
+  performance_key bigint [pk, increment]
+
+  student_key bigint [not null]
+  school_key bigint [not null]
+  district_key bigint [not null]
+  stream_key bigint [not null]
+  medium_key bigint [not null]
+  subject_key bigint [not null]
+  exam_key bigint [not null]
+
+  marks decimal(5,2)
+  grade varchar(5)
+  z_score decimal(8,4)
+
+  pass_flag boolean
+  university_eligible_flag boolean
+
+  created_at timestamp
+}
+
+Ref: fact_student_performance.student_key > dim_student.student_key
+
+Ref: fact_student_performance.school_key > dim_school.school_key
+
+Ref: fact_student_performance.district_key > dim_district.district_key
+
+Ref: fact_student_performance.stream_key > dim_stream.stream_key
+
+Ref: fact_student_performance.medium_key > dim_medium.medium_key
+
+Ref: fact_student_performance.subject_key > dim_subject.subject_key
+
+Ref: fact_student_performance.exam_key > dim_exam.exam_key
+
+Ref: "fact_student_performance"."grade" ?<>? "fact_student_performance"."z_score"
